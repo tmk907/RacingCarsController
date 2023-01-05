@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "RacingCarsControllerWinUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "RacingCarsControllerWinUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

@@ -1,0 +1,161 @@
+﻿<Window
+    x:Class="RacingCarsControllerWinUI.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:RacingCarsControllerWinUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:connectivity="using:CommunityToolkit.WinUI.Connectivity"
+    mc:Ignorable="d">
+
+    <Grid Background="#fbd426">
+        <StackPanel
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Orientation="Horizontal"
+            Spacing="16">
+            <StackPanel.Resources>
+                <Style
+                    x:Key="buttonStyle"
+                    BasedOn="{StaticResource DefaultButtonStyle}"
+                    TargetType="Button">
+                    <Setter Property="BorderBrush" Value="#e0121b" />
+                    <Setter Property="Width" Value="100" />
+                    <Setter Property="Height" Value="44" />
+                    <Setter Property="CornerRadius" Value="8" />
+                </Style>
+            </StackPanel.Resources>
+            <StackPanel Orientation="Vertical">
+                <Button
+                    x:Name="scanDevicesButton"
+                    Click="scanDevices_Click"
+                    Style="{StaticResource buttonStyle}"
+                    ToolTipService.ToolTip="(Ctrl + F)">
+                    Start scan
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="R" Modifiers="Control" />
+                    </Button.KeyboardAccelerators>
+                </Button>
+                <ProgressBar
+                    x:Name="scan_Progress"
+                    Margin="0,4,0,4"
+                    IsIndeterminate="True"
+                    Visibility="Collapsed" />
+                <ListView
+                    x:Name="devicesList"
+                    ItemsSource="{x:Bind _bluetoothLEHelper.BluetoothLeDevices}"
+                    SelectionChanged="deviceSelected">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="connectivity:ObservableBluetoothLEDevice">
+                            <StackPanel>
+                                <TextBlock Text="{x:Bind Name, Mode=OneWay}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+            <StackPanel Orientation="Vertical">
+                <Button
+                    Click="disconnect_Click"
+                    Content="Disconnect"
+                    Style="{StaticResource buttonStyle}" />
+                <TextBlock x:Name="selectedCarName_Text" Margin="8" />
+                <StackPanel
+                    x:Name="battery_Panel"
+                    Margin="8"
+                    Orientation="Horizontal"
+                    Spacing="4"
+                    Visibility="Collapsed">
+                    <FontIcon x:Name="selectedCarBattery_Icon" />
+                    <TextBlock x:Name="selectedCarBattery_Text" />
+                </StackPanel>
+            </StackPanel>
+            <Grid ColumnSpacing="8" RowSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="BorderBrush" Value="#e0121b" />
+                        <Setter Property="Width" Value="100" />
+                        <Setter Property="Height" Value="100" />
+                        <Setter Property="CornerRadius" Value="8" />
+                    </Style>
+                    <Style TargetType="ToggleButton">
+                        <Setter Property="BorderBrush" Value="#e0121b" />
+                        <Setter Property="Width" Value="100" />
+                        <Setter Property="Height" Value="100" />
+                        <Setter Property="CornerRadius" Value="8" />
+                    </Style>
+                </Grid.Resources>
+                <ToggleButton
+                    Name="buttonLights"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    ToolTipService.ToolTip="Toggle lights (Q)">
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE781;" />
+                    <ToggleButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="Q" Modifiers="None" />
+                    </ToggleButton.KeyboardAccelerators>
+                </ToggleButton>
+                <Button
+                    Name="buttonForward"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    ToolTipService.ToolTip="Forward (Up arrow)">
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE70E;" />
+                    <!--<Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Up" Modifiers="None" />
+                </Button.KeyboardAccelerators>-->
+                </Button>
+                <ToggleButton
+                    Name="buttonTurbo"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    ToolTipService.ToolTip="Toggle turbo (E)">
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEC4A;" />
+                    <ToggleButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="E" Modifiers="None" />
+                    </ToggleButton.KeyboardAccelerators>
+                </ToggleButton>
+                <Button
+                    Name="buttonLeft"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    ToolTipService.ToolTip="Left (Left arrow)">
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE76B;" />
+                    <!--<Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Left" Modifiers="None" Invoked="Left_Invoked" />
+                </Button.KeyboardAccelerators>-->
+                </Button>
+                <Button
+                    Name="buttonBackward"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    ToolTipService.ToolTip="Backward (Down arrow)">
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE70D;" />
+                    <!--<Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Down" Modifiers="None" />
+                </Button.KeyboardAccelerators>-->
+                </Button>
+                <Button
+                    Name="buttonRight"
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    ToolTipService.ToolTip="Right (Right arrow)">
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE76C;" />
+                    <!--<Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Right" Modifiers="Control" />
+                </Button.KeyboardAccelerators>-->
+                </Button>
+            </Grid>
+
+        </StackPanel>
+    </Grid>
+</Window>
