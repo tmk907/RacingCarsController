@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Windows.Devices.Bluetooth;
 
 namespace RacingCarsControllerWinUI
 {
     public class UnknownCar : RemoteCar
     {
-        public UnknownCar(BluetoothLEDevice device) : base(device)
+        public UnknownCar() : base(new UnknownBLEDevice())
         {
         }
 
@@ -26,6 +25,11 @@ namespace RacingCarsControllerWinUI
         public override Task SubscribeToBatteryNotifications()
         {
             return Task.CompletedTask;
+        }
+
+        protected override int GetBatteryLevel(byte[] data)
+        {
+            return 0;
         }
 
         protected override byte[] PreparePayload(CarCommand command)

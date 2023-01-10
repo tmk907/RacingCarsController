@@ -75,19 +75,18 @@ namespace RacingCarsControllerWinUI
         public async Task<IRemoteCar> ConnectDeviceAsync(DeviceInformation deviceInfo)
         {
             App.WriteDebug($"ConnectDeviceAsync {deviceInfo.Name}");
-            IRemoteCar car = new UnknownCar(null);
+            IRemoteCar car = new UnknownCar();
             try
             {
                 // Note: BluetoothLEDevice.FromIdAsync must be called from a UI thread because it may prompt for consent.
                 var bluetoothLeDevice = await BluetoothLEDevice.FromIdAsync(deviceInfo.Id);
                 if (FerrariCar.IsSupportedModel(deviceInfo.Name))
                 {
-                    car = new FerrariCar(bluetoothLeDevice);
+                    car = new FerrariCar(new BLEDevice(bluetoothLeDevice));
                 }
                 else if (BrandbaseCar.IsSupportedModel(deviceInfo.Name))
                 {
-                    car = new BrandbaseCar(bluetoothLeDevice);
-                    
+                    car = new BrandbaseCar(new BLEDevice(bluetoothLeDevice));
                 }
             }
             catch (Exception ex)

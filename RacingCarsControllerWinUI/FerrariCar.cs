@@ -1,6 +1,4 @@
-﻿using Windows.Devices.Bluetooth;
-
-namespace RacingCarsControllerWinUI
+﻿namespace RacingCarsControllerWinUI
 {
     public class FerrariCar : RemoteCar
     {
@@ -10,7 +8,7 @@ namespace RacingCarsControllerWinUI
         public override string BatteryServiceUUID => "0000180f-0000-1000-8000-00805f9b34fb";
         public override string BatteryCharacteristicUUID => "00002a19-0000-1000-8000-00805f9b34fb";
 
-        public FerrariCar(BluetoothLEDevice device) : base(device)
+        public FerrariCar(IBLEDevice device) : base(device)
         {
         }
 
@@ -43,6 +41,11 @@ namespace RacingCarsControllerWinUI
                 data[6] = 1;
 
             return data;
+        }
+
+        protected override int GetBatteryLevel(byte[] data)
+        {
+            return data[0];
         }
     }
 }

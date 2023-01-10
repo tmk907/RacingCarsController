@@ -1,13 +1,10 @@
-﻿using Windows.Devices.Bluetooth;
-using Windows.Storage.Streams;
-    
-namespace RacingCarsControllerWinUI
+﻿namespace RacingCarsControllerWinUI
 {
     internal class BrandbaseCar : RemoteCar
     {
         private readonly byte[] _aesKey = new byte[] { 0x34, 0x52, 0x2A, 0x5B, 0x7A, 0x6E, 0x49, 0x2C, 0x08, 0x09, 0x0A, 0x9D, 0x8D, 0x2A, 0x23, 0xF8 };
 
-        public BrandbaseCar(BluetoothLEDevice device) : base(device)
+        public BrandbaseCar(IBLEDevice device) : base(device)
         {
             IgnoreSubsequentSameCommands = false;
         }
@@ -57,10 +54,8 @@ namespace RacingCarsControllerWinUI
             return data;
         }
 
-        protected override int GetBatteryLevel(DataReader reader)
+        protected override int GetBatteryLevel(byte[] data)
         {
-            byte[] data = new byte[16];
-            reader.ReadBytes(data);
             byte[] decoded = AESHelper.Decrypt(_aesKey, data);
             if (decoded.Length == 16)
             {
