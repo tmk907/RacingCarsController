@@ -83,11 +83,11 @@ namespace RacingCarsControllerWinUI
                 var bluetoothLeDevice = await BluetoothLEDevice.FromIdAsync(deviceInfo.Id);
                 if (FerrariCar.IsSupportedModel(deviceInfo.Name))
                 {
-                    car = new FerrariCar(new BLEDevice(bluetoothLeDevice), new SystemDiagnosticsLogger());
+                    car = new FerrariCar(new WindowsBLEDevice(bluetoothLeDevice), new SystemDiagnosticsLogger());
                 }
                 else if (BrandbaseCar.IsSupportedModel(deviceInfo.Name))
                 {
-                    car = new BrandbaseCar(new BLEDevice(bluetoothLeDevice), new SystemDiagnosticsLogger());
+                    car = new BrandbaseCar(new WindowsBLEDevice(bluetoothLeDevice), new SystemDiagnosticsLogger());
                 }
             }
             catch (Exception ex)

@@ -9,19 +9,18 @@ using Windows.Storage.Streams;
 
 namespace RacingCarsControllerWinUI
 {
-
-    public class BLEDevice : IBLEDevice, IAsyncDisposable
+    public class WindowsBLEDevice : IBLEDevice, IAsyncDisposable
     {
         private readonly Dictionary<string, GattCharacteristic> _cachedCharacteristics;
-        private readonly List<string> _notificationsCharacteristics;
+        private readonly List<string> _notificationsCharacteristicUUIDs;
 
         protected BluetoothLEDevice Device;
         public event EventHandler<byte[]> CharacteristicChanged;
 
-        public BLEDevice(BluetoothLEDevice device)
+        public WindowsBLEDevice(BluetoothLEDevice device)
         {
             _cachedCharacteristics = new Dictionary<string, GattCharacteristic>();
-            _notificationsCharacteristics = new List<string>();
+            _notificationsCharacteristicUUIDs = new List<string>();
             Device = device;
         }
 
@@ -60,7 +59,7 @@ namespace RacingCarsControllerWinUI
                         GattClientCharacteristicConfigurationDescriptorValue.Notify);
                 if (status == GattCommunicationStatus.Success)
                 {
-                    _notificationsCharacteristics.Add(characteristicsUUID);
+                    _notificationsCharacteristicUUIDs.Add(characteristicsUUID);
                     characteristic.ValueChanged += Characteristic_ValueChanged;
                 }
             }
@@ -113,7 +112,7 @@ namespace RacingCarsControllerWinUI
 
         public async ValueTask DisposeAsync()
         {
-            foreach (var notificationsCharact in _notificationsCharacteristics)
+            foreach (var notificationsCharact in _notificationsCharacteristicUUIDs)
             {
                 if (_cachedCharacteristics.ContainsKey(notificationsCharact))
                 {
