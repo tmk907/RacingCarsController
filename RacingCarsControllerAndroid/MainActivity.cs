@@ -1,229 +1,110 @@
-using Android;
-using Android.App;
-using Android.Bluetooth;
-using Android.Bluetooth.LE;
-using Android.Content;
-using Android.Content.PM;
-using Android.OS;
-using Android.Runtime;
-using Android.Widget;
-using AndroidX.Core.App;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Android.Util;
+using Plugin.BLE;
+using Plugin.BLE.Abstractions;
+using Plugin.BLE.Abstractions.Contracts;
+using Plugin.BLE.Abstractions.Exceptions;
 using Xamarin.Essentials;
-using static Android.Icu.Text.CaseMap;
 
 namespace RacingCarsControllerAndroid
 {
     [Activity(Label = "@string/app_name", MainLauncher = true)]
     public class MainActivity : Activity
     {
-        private const int ENABLE_BLUETOOTH_REQUEST_CODE = 1;
-        private const int RUNTIME_PERMISSION_REQUEST_CODE = 2;
-
-        private BluetoothAdapter bluetoothAdapter;
-        private BluetoothLeScanner bleScanner => bluetoothAdapter.BluetoothLeScanner;
-
-        private ScanSettings _scanSetting;
-
-        public bool IsScanning { get; set; } = false;
-
-        public List<ScanResult> ScanResults { get; } = new List<ScanResult>();
-        //todo scanResultsAdapter
-
-        private bool _isLocationPermissionGranted => hasPermission(Manifest.Permission.AccessFineLocation);
+        private PermissionsHelpers _permissionsHelpers;
 
         protected override void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
-            var bluetoothManager = GetSystemService(Context.BluetoothService) as BluetoothManager;
-            bluetoothAdapter = bluetoothManager?.Adapter;
-            _scanSetting = new ScanSettings.Builder().SetScanMode(Android.Bluetooth.LE.ScanMode.LowLatency).Build();
+            Xamarin.Essentials.Platform.Init(this, savedInstanceState);
+            _permissionsHelpers = new PermissionsHelpers(this);
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.activity_main);
 
-            var scanButton = FindViewById<Button>(Resource.Id.scan_button);
-            scanButton.Click += ScanButton_Click;
-            //SetupRecyclerView(); todo
+            var button = FindViewById<Button>(Resource.Id.textButton);
+            button.Click += Button_Click;
         }
 
-        protected override void OnResume()
+        private async void Button_Click(object? sender, EventArgs e)
         {
-            base.OnResume();
-            if (!bluetoothAdapter.IsEnabled)
-            {
-                PromptEnableBluetooth();
-            }
+            var state = await _permissionsHelpers.CheckAndRequestBluetoothPermissions();
+            await TestScan();
         }
 
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent? data)
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Android.Content.PM.Permission[] grantResults)
         {
-            base.OnActivityResult(requestCode, resultCode, data);
-            switch(requestCode) {
-                case ENABLE_BLUETOOTH_REQUEST_CODE:
-                    if (resultCode != Result.Ok)
-                    {
-                        PromptEnableBluetooth();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
+            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        private void ScanButton_Click(object? sender, EventArgs e)
-        {
-            if ()
-            {
-                StopBleScan();
-            }
-            else
-            {
-                StartBleScan();
-            }
-        }
-
-        private void PromptEnableBluetooth()
-        {
-            if (!bluetoothAdapter.IsEnabled)
-            {
-                var enableBtIntent = new Intent(BluetoothAdapter.ActionRequestEnable);
-                StartActivityForResult(enableBtIntent, ENABLE_BLUETOOTH_REQUEST_CODE);
-            }
-        }
-
-        private bool hasPermission(string permissionType)
-        {
-            return ApplicationContext.CheckSelfPermission(permissionType) == Android.Content.PM.Permission.Granted;
-        }
-
-        private bool hasRequiredRuntimePermissions()
-        {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.S) {
-                return hasPermission(Manifest.Permission.BluetoothScan) 
-                    && hasPermission(Manifest.Permission.BluetoothConnect);
-            } else {
-                return hasPermission(Manifest.Permission.AccessFineLocation);
-            }
-        }
-
-        private void StartBleScan()
-        {
-            if (!hasRequiredRuntimePermissions())
-            {
-                RequestRelevantRuntimePermissions();
-            }
-            else 
-            {
-                
-
-
-                IsScanning = true;
-            }
-        }
-
-        private void StopBleScan()
-        {
-            bleScanner.StopScan();
-            IsScanning = false;
-        }
-
-
-        private void RequestRelevantRuntimePermissions()
-        {
-            if (hasRequiredRuntimePermissions()) return;
-            if(Build.VERSION.SdkInt < BuildVersionCodes.S)
-            {
-                RequestLocationPermission();
-            }
-            else
-            {
-                RequestBluetoothPermissions();
-            }
-        }
-
-        private void RequestLocationPermission()
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.SetTitle("Location permission required");
-                builder.SetMessage("Starting from Android M (6.0), the system requires apps to be granted " +
-                "location access in order to scan for BLE devices.");
-                builder.SetCancelable(false);
-                builder.SetPositiveButton(Resource.String.ok, OnRequestLocationPermissionAccept);
-                builder.Show();
-            });
-        }
-
-        private void RequestBluetoothPermissions()
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.SetTitle("Bluetooth permissions required");
-                builder.SetMessage("Starting from Android 12, the system requires apps to be granted " +
-                "Bluetooth access in order to scan for and connect to BLE devices.");
-                builder.SetCancelable(false);
-                builder.SetPositiveButton(Resource.String.ok, OnRequestBluetoothPermissionsAccept);
-                builder.Show();
-            });
-        }
-
-        private void OnRequestLocationPermissionAccept(object sender, DialogClickEventArgs args)
-        {
-            ActivityCompat.RequestPermissions(
-                            this,
-                            new[] { Manifest.Permission.AccessFineLocation },
-                            RUNTIME_PERMISSION_REQUEST_CODE
-                        );
-        }
-
-        private void OnRequestBluetoothPermissionsAccept(object sender, DialogClickEventArgs args)
-        {
-            ActivityCompat.RequestPermissions(
-                            this,
-                            new[] { Manifest.Permission.BluetoothScan, Manifest.Permission.BluetoothConnect },
-                            RUNTIME_PERMISSION_REQUEST_CODE
-                        );
-        }
-
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
-        {
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
 
-            if (requestCode == RUNTIME_PERMISSION_REQUEST_CODE)
+        private async Task TestScan()
+        {
+            var ble = CrossBluetoothLE.Current;
+            var adapter = CrossBluetoothLE.Current.Adapter;
+
+            adapter.DeviceDiscovered += async (s, a) =>
             {
-                var containsPermanentDenial = permissions
-                    .Zip(grantResults)
-                    .Any(x => x.Second == Permission.Denied &&
-                            ActivityCompat.ShouldShowRequestPermissionRationale(this, x.First));
-                var containsDenial = grantResults.Any(x => x == Permission.Denied);
-                var allGranted = grantResults.All(x => x == Permission.Granted);
-                if (containsPermanentDenial)
+                LogMessage($"New device found {a.Device.Id} {a.Device?.Name}");
+
+                if (a.Device.Name != null && a.Device.Name.StartsWith("SL-SF"))
                 {
-                    // TODO: Handle permanent denial (e.g., show AlertDialog with justification)
-                    // Note: The user will need to navigate to App Settings and manually grant
-                    // permissions that were permanently denied
+                    await MainThread.InvokeOnMainThreadAsync(async () => await test(a.Device));
                 }
-                else if (containsDenial)
-                {
-                    RequestRelevantRuntimePermissions();
-                }
-                else if (allGranted && hasRequiredRuntimePermissions())
-                {
-                    StartBleScan();
-                }
-                else
-                {
-                    // Unexpected scenario encountered when handling permissions
-                    Recreate();
-                }
+            };
+            var scanFilterOptions = new ScanFilterOptions();
+            adapter.ScanMode = Plugin.BLE.Abstractions.Contracts.ScanMode.Balanced;
+            try
+            {
+                await adapter.StartScanningForDevicesAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+        }
+
+        private async Task test(IDevice device)
+        {
+            try
+            {
+                await CrossBluetoothLE.Current.Adapter.ConnectToDeviceAsync(device);
+                var service = await device.GetServiceAsync(Guid.Parse("0000fff0-0000-1000-8000-00805f9b34fb"));
+                var characteristic = await service.GetCharacteristicAsync(Guid.Parse("0000fff1-0000-1000-8000-00805f9b34fb"));
+                var payload = PreparePayload();
+                var success = await characteristic.WriteAsync(payload);
+
+            }
+            catch (DeviceConnectionException e)
+            {
+                // ... could not connect to device
             }
         }
 
+        protected byte[] PreparePayload()
+        {
+            byte[] data = new byte[8];
+            data[0] = 1;
+
+                data[1] = 0;
+                data[2] = 0;
+
+                data[4] = 1;
+                data[3] = 0;
+
+                data[5] = 0;
+
+                data[6] = 0;
+
+            return data;
+        }
+
+        public static void LogMessage(string text)
+        {
+            Log.Info("APP LOG", text);
+            System.Diagnostics.Debug.WriteLine($"APP LOG: {text}");
+        }
     }
 }

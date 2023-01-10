@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">RacingCarsControllerAndroid</string>
-    <string name="app_text">Hello, Android!</string>
+    <string name="app_name">Racing Cars Controller</string>
 	<string name="ok">OK</string>
-
 </resources>
