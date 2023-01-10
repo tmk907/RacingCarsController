@@ -9,6 +9,7 @@ using Android.Runtime;
 using Android.Widget;
 using AndroidX.Core.App;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Essentials;
 using static Android.Icu.Text.CaseMap;
@@ -24,35 +25,29 @@ namespace RacingCarsControllerAndroid
         private BluetoothAdapter bluetoothAdapter;
         private BluetoothLeScanner bleScanner => bluetoothAdapter.BluetoothLeScanner;
 
+        private ScanSettings _scanSetting;
+
         public bool IsScanning { get; set; } = false;
 
+        public List<ScanResult> ScanResults { get; } = new List<ScanResult>();
+        //todo scanResultsAdapter
+
+        private bool _isLocationPermissionGranted => hasPermission(Manifest.Permission.AccessFineLocation);
 
         protected override void OnCreate(Bundle? savedInstanceState)
         {
+            base.OnCreate(savedInstanceState);
 
             var bluetoothManager = GetSystemService(Context.BluetoothService) as BluetoothManager;
             bluetoothAdapter = bluetoothManager?.Adapter;
-
-
-            base.OnCreate(savedInstanceState);
+            _scanSetting = new ScanSettings.Builder().SetScanMode(Android.Bluetooth.LE.ScanMode.LowLatency).Build();
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.activity_main);
 
             var scanButton = FindViewById<Button>(Resource.Id.scan_button);
             scanButton.Click += ScanButton_Click;
-        }
-
-        private void ScanButton_Click(object? sender, EventArgs e)
-        {
-            if ()
-            {
-                StopBleScan();
-            }
-            else
-            {
-                StartBleScan();
-            }
+            //SetupRecyclerView(); todo
         }
 
         protected override void OnResume()
@@ -76,6 +71,18 @@ namespace RacingCarsControllerAndroid
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void ScanButton_Click(object? sender, EventArgs e)
+        {
+            if ()
+            {
+                StopBleScan();
+            }
+            else
+            {
+                StartBleScan();
             }
         }
 
