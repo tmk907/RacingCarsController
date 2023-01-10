@@ -1,24 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/container"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/textButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Text button"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-        />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/buttonScan"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Scan devices"/>
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/devicesList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/disconnectButton"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Disconnect" />
+
+            <TextView
+                android:id="@+id/selectedCarName_Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/selectedCarBattery_Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="" />
+        </LinearLayout>
+
+        <TableLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center_vertical">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+                <Button
+                    android:id="@+id/buttonLights"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:icon="@drawable/ic_baseline_highlight_24"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"/>
+
+                <Button
+                    android:id="@+id/buttonForward"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:icon="@drawable/ic_baseline_arrow_upward_24"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"/>
+
+                <Button
+                    android:id="@+id/buttonTurbo"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:icon="@drawable/ic_baseline_speed_24"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <Button
+                    android:id="@+id/buttonLeft"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:icon="@drawable/ic_baseline_arrow_back_24"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"/>
+
+                <Button
+                    android:id="@+id/buttonBackward"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:icon="@drawable/ic_baseline_arrow_downward_24"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"/>
+
+                <Button
+                    android:id="@+id/buttonRight"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:icon="@drawable/ic_baseline_arrow_forward_24"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"/>
+            </TableRow>
+        </TableLayout>
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

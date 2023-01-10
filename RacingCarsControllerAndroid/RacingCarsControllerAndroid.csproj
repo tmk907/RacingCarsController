@@ -10,8 +10,20 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Resources\drawable\ic_baseline_arrow_back_24.xml" />
+    <None Remove="Resources\drawable\ic_baseline_arrow_downward_24.xml" />
+    <None Remove="Resources\drawable\ic_baseline_arrow_forward_24.xml" />
+    <None Remove="Resources\drawable\ic_baseline_arrow_upward_24.xml" />
+    <None Remove="Resources\drawable\ic_baseline_highlight_24.xml" />
+    <None Remove="Resources\drawable\ic_baseline_speed_24.xml" />
+    <None Remove="Resources\layout\device_item.xml" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Plugin.BLE" Version="3.0.0-beta.2" />
     <PackageReference Include="Xamarin.Essentials" Version="1.7.4" />
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.7.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RacingCarsController.Common\RacingCarsController.Common.csproj" />
   </ItemGroup>
 </Project>
