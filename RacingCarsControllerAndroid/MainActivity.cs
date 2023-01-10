@@ -1,6 +1,3 @@
-using Android.Bluetooth;
-using Android.Content;
-using Android.OS;
 using Android.Util;
 using AndroidX.RecyclerView.Widget;
 using Plugin.BLE;
@@ -25,6 +22,15 @@ namespace RacingCarsControllerAndroid
         private TextView selectedCarBatteryTextView;
         private Button scanButton;
         private Button disconnectButton;
+
+        bool isLightsOn = false;
+        bool isTurboOn = false;
+
+        private Button buttonForward;
+        private Button buttonBackward;
+        private Button buttonLeft;
+        private Button buttonRight;
+
 
         protected override void OnCreate(Bundle? savedInstanceState)
         {
@@ -56,10 +62,28 @@ namespace RacingCarsControllerAndroid
             disconnectButton = FindViewById<Button>(Resource.Id.disconnectButton);
             disconnectButton.Click += DisconnectButton_Click;
 
+            var lightsButton = FindViewById<Button>(Resource.Id.buttonLights);
+            lightsButton.Click += LightsButton_Click;
+            var turboButton = FindViewById<Button>(Resource.Id.buttonTurbo);
+            turboButton.Click += TurboButton_Click;
+
+            buttonForward = FindViewById<Button>(Resource.Id.buttonForward);
+            buttonBackward = FindViewById<Button>(Resource.Id.buttonBackward);
+            buttonLeft = FindViewById<Button>(Resource.Id.buttonLeft);
+            buttonRight = FindViewById<Button>(Resource.Id.buttonRight);
+
             selectedCarTextView = FindViewById<TextView>(Resource.Id.selectedCarName_Text);
             selectedCarBatteryTextView = FindViewById<TextView>(Resource.Id.selectedCarBattery_Text);
+        }
 
-            //_timer.Start();
+        private void TurboButton_Click(object? sender, EventArgs e)
+        {
+            isTurboOn = !isTurboOn;
+        }
+
+        private void LightsButton_Click(object? sender, EventArgs e)
+        {
+            isLightsOn = !isLightsOn;
         }
 
         private async void ScanButton_Click(object? sender, EventArgs e)
@@ -76,15 +100,15 @@ namespace RacingCarsControllerAndroid
         {
             if (_selectedCar != null)
             {
-                //var command = new CarCommand(
-                //    buttonForward.IsPressed || IsKeyPressed(new[] { VirtualKey.Up, VirtualKey.W }),
-                //    buttonBackward.IsPressed || IsKeyPressed(new[] { VirtualKey.Down, VirtualKey.S }),
-                //    buttonLeft.IsPressed || IsKeyPressed(new[] { VirtualKey.Left, VirtualKey.A }),
-                //    buttonRight.IsPressed || IsKeyPressed(new[] { VirtualKey.Right, VirtualKey.D }),
-                //    buttonLights.IsChecked ?? false,
-                //    buttonTurbo.IsChecked ?? false);
+                var command = new CarCommand(
+                    buttonForward.Pressed,
+                    buttonBackward.Pressed,
+                    buttonLeft.Pressed,
+                    buttonRight.Pressed,
+                    isLightsOn,
+                    isTurboOn);
 
-                //await MainThread.InvokeOnMainThreadAsync(_selectedCar.SendCommandAsync(command));
+                await MainThread.InvokeOnMainThreadAsync(async () => await _selectedCar.SendCommandAsync(command));
             }
         }
 
@@ -199,6 +223,7 @@ namespace RacingCarsControllerAndroid
                 LogMessage(ex.ToString());
             }
             await car.SubscribeToBatteryNotifications();
+            _timer.Start();
             return car;
         }
 
@@ -206,6 +231,7 @@ namespace RacingCarsControllerAndroid
         {
             if (_selectedCar != null)
             {
+                _timer.Stop();
                 LogMessage("DisconnectCarAsync");
                 _selectedCar.BatteryLevelChanged -= OnBatteryLevelChanged;
                 await _selectedCar.DisposeAsync();
