@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RacingCarsController.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,13 +9,6 @@ using Windows.Storage.Streams;
 
 namespace RacingCarsControllerWinUI
 {
-    public interface IBLEDevice
-    {
-        public event EventHandler<byte[]> CharacteristicChanged;
-        Task WriteCharacteristics(string serviceUUID, string characteristicsUUID, byte[] data);
-        Task SubscribeToNotifications(string serviceUUID, string characteristicsUUID);
-        ValueTask DisposeAsync();
-    }
 
     public class BLEDevice : IBLEDevice, IAsyncDisposable
     {

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.WinUI.Connectivity;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
+using RacingCarsController.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace RacingCarsControllerWinUI
     {
         private readonly BluetoothLEHelper _bluetoothLEHelper = BluetoothLEHelper.Context;
         private readonly DispatcherTimer _dispatcherTimer;
-        private IRemoteCar _selectedCar;
+        private IRacingCar _selectedCar;
 
         public MainWindow()
         {
@@ -72,21 +73,21 @@ namespace RacingCarsControllerWinUI
             });
         }
 
-        public async Task<IRemoteCar> ConnectDeviceAsync(DeviceInformation deviceInfo)
+        public async Task<IRacingCar> ConnectDeviceAsync(DeviceInformation deviceInfo)
         {
             App.WriteDebug($"ConnectDeviceAsync {deviceInfo.Name}");
-            IRemoteCar car = new UnknownCar();
+            IRacingCar car = new UnknownCar();
             try
             {
                 // Note: BluetoothLEDevice.FromIdAsync must be called from a UI thread because it may prompt for consent.
                 var bluetoothLeDevice = await BluetoothLEDevice.FromIdAsync(deviceInfo.Id);
                 if (FerrariCar.IsSupportedModel(deviceInfo.Name))
                 {
-                    car = new FerrariCar(new BLEDevice(bluetoothLeDevice));
+                    car = new FerrariCar(new BLEDevice(bluetoothLeDevice), new SystemDiagnosticsLogger());
                 }
                 else if (BrandbaseCar.IsSupportedModel(deviceInfo.Name))
                 {
-                    car = new BrandbaseCar(new BLEDevice(bluetoothLeDevice));
+                    car = new BrandbaseCar(new BLEDevice(bluetoothLeDevice), new SystemDiagnosticsLogger());
                 }
             }
             catch (Exception ex)

@@ -1,6 +1,6 @@
-﻿namespace RacingCarsControllerWinUI
+﻿namespace RacingCarsController.Common
 {
-    public class FerrariCar : RemoteCar
+    public class FerrariCar : RacingCar
     {
         public override string ControlServiceUUID => "0000fff0-0000-1000-8000-00805f9b34fb";
         public override string ControlCharacteristicUUID => "0000fff1-0000-1000-8000-00805f9b34fb";
@@ -8,7 +8,7 @@
         public override string BatteryServiceUUID => "0000180f-0000-1000-8000-00805f9b34fb";
         public override string BatteryCharacteristicUUID => "00002a19-0000-1000-8000-00805f9b34fb";
 
-        public FerrariCar(IBLEDevice device) : base(device)
+        public FerrariCar(IBLEDevice device, ILogger logger) : base(device, logger)
         {
         }
 

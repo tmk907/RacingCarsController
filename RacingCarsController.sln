@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RacingCarsControllerWinUI",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RacingCarsControllerAndroid", "RacingCarsControllerAndroid\RacingCarsControllerAndroid.csproj", "{A1D3927C-86F7-40A4-A467-8D870A4CBBEC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RacingCarsController.Common", "RacingCarsController.Common\RacingCarsController.Common.csproj", "{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,22 @@ Global
 		{A1D3927C-86F7-40A4-A467-8D870A4CBBEC}.Release|x86.ActiveCfg = Release|Any CPU
 		{A1D3927C-86F7-40A4-A467-8D870A4CBBEC}.Release|x86.Build.0 = Release|Any CPU
 		{A1D3927C-86F7-40A4-A467-8D870A4CBBEC}.Release|x86.Deploy.0 = Release|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Debug|arm64.Build.0 = Debug|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Debug|x64.Build.0 = Debug|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Debug|x86.Build.0 = Debug|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Release|arm64.ActiveCfg = Release|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Release|arm64.Build.0 = Release|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Release|x64.ActiveCfg = Release|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Release|x64.Build.0 = Release|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Release|x86.ActiveCfg = Release|Any CPU
+		{E3CD7ABF-FDCF-4AAD-B85F-6D2A44C1CB79}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

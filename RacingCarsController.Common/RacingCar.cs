@@ -1,9 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace RacingCarsControllerWinUI
+﻿namespace RacingCarsController.Common
 {
-    public interface IRemoteCar : IAsyncDisposable
+    public interface IRacingCar : IAsyncDisposable
     {
         event EventHandler<int> BatteryLevelChanged;
 
@@ -11,32 +8,33 @@ namespace RacingCarsControllerWinUI
         Task SubscribeToBatteryNotifications();
     }
 
-    public abstract class RemoteCar : IRemoteCar
+    public abstract class RacingCar : IRacingCar
     {
-        public abstract string ControlServiceUUID { get; }   
+        public abstract string ControlServiceUUID { get; }
         public abstract string ControlCharacteristicUUID { get; }
 
         public abstract string BatteryServiceUUID { get; }
         public abstract string BatteryCharacteristicUUID { get; }
 
-        public event EventHandler<int> BatteryLevelChanged;
+        public event EventHandler<int>? BatteryLevelChanged;
 
         protected IBLEDevice Device;
-
+        private readonly ILogger _logger;
         protected bool IgnoreSubsequentSameCommands;
-        private CarCommand _previousCommand;
+        private CarCommand? _previousCommand;
 
-        public RemoteCar(IBLEDevice device)
+        public RacingCar(IBLEDevice device, ILogger logger)
         {
             Device = device;
+            _logger = logger;
             Device.CharacteristicChanged += Device_CharacteristicChanged;
             IgnoreSubsequentSameCommands = true;
         }
 
-        private void Device_CharacteristicChanged(object sender, byte[] args)
+        private void Device_CharacteristicChanged(object? sender, byte[] args)
         {
             var level = GetBatteryLevel(args);
-            App.WriteDebug($"Battery level is {level}");
+            _logger.Log($"Battery level is {level}");
             OnBatteryLevelChanged(level);
         }
 
@@ -44,11 +42,11 @@ namespace RacingCarsControllerWinUI
         {
             if (IgnoreSubsequentSameCommands && command == _previousCommand)
             {
-                App.WriteDebug($"Don't send command {command}");
+                _logger.Log($"Don't send command {command}");
                 return;
             };
             _previousCommand = command;
-            App.WriteDebug($"Send command {command}");
+            _logger.Log($"Send command {command}");
 
             var data = PreparePayload(command);
             await Device.WriteCharacteristics(ControlServiceUUID, ControlCharacteristicUUID, data);

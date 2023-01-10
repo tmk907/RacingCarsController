@@ -1,10 +1,10 @@
-﻿namespace RacingCarsControllerWinUI
+﻿namespace RacingCarsController.Common
 {
-    internal class BrandbaseCar : RemoteCar
+    public class BrandbaseCar : RacingCar
     {
         private readonly byte[] _aesKey = new byte[] { 0x34, 0x52, 0x2A, 0x5B, 0x7A, 0x6E, 0x49, 0x2C, 0x08, 0x09, 0x0A, 0x9D, 0x8D, 0x2A, 0x23, 0xF8 };
 
-        public BrandbaseCar(IBLEDevice device) : base(device)
+        public BrandbaseCar(IBLEDevice device, ILogger logger) : base(device, logger)
         {
             IgnoreSubsequentSameCommands = false;
         }

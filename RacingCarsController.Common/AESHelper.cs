@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace RacingCarsControllerWinUI
+namespace RacingCarsController.Common
 {
     public class AESHelper
     {

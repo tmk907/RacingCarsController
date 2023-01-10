@@ -1,11 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace RacingCarsControllerWinUI
+﻿namespace RacingCarsController.Common
 {
     public class UnknownBLEDevice : IBLEDevice
     {
-        public event EventHandler<byte[]> CharacteristicChanged;
+        public event EventHandler<byte[]>? CharacteristicChanged;
 
         public ValueTask DisposeAsync()
         {

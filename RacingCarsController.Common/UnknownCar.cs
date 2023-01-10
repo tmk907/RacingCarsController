@@ -1,11 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace RacingCarsControllerWinUI
+﻿namespace RacingCarsController.Common
 {
-    public class UnknownCar : RemoteCar
+    public class UnknownCar : RacingCar
     {
-        public UnknownCar() : base(new UnknownBLEDevice())
+        public UnknownCar() : base(new UnknownBLEDevice(), new SystemDiagnosticsLogger())
         {
         }
 
