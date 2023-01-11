@@ -9,5 +9,7 @@
         android:layout_height="48dp"
         android:layout_weight="1"
         android:paddingStart="16dp"
-        android:paddingTop="12dp" />
+        android:paddingTop="12dp"
+        android:fontFamily="@font/roboto"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 </LinearLayout>
