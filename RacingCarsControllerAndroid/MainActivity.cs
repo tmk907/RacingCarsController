@@ -1,5 +1,6 @@
 using Android.Util;
 using AndroidX.RecyclerView.Widget;
+using Google.Android.Material.ProgressIndicator;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
@@ -8,7 +9,7 @@ using Xamarin.Essentials;
 
 namespace RacingCarsControllerAndroid
 {
-    [Activity(Label = "@string/app_name", MainLauncher = true, ScreenOrientation = Android.Content.PM.ScreenOrientation.Landscape)]
+    [Activity(Label = "@string/app_name", MainLauncher = true)]
     public class MainActivity : Activity
     {
         private PermissionsHelpers _permissionsHelpers;
@@ -18,14 +19,19 @@ namespace RacingCarsControllerAndroid
 
         private DeviceItemAdapter _deviceItemAdapter;
 
+        private Button scanButton;
+        private LinearProgressIndicator scanProgressIndicator;
+
+        private Button disconnectButton;
+        private LinearLayout selectedCar_Layout;
         private TextView selectedCarTextView;
         private TextView selectedCarBatteryTextView;
-        private Button scanButton;
-        private Button disconnectButton;
 
         bool isLightsOn = false;
         bool isTurboOn = false;
 
+        private Button lightsButton;
+        private Button turboButton;
         private Button buttonForward;
         private Button buttonBackward;
         private Button buttonLeft;
@@ -39,7 +45,7 @@ namespace RacingCarsControllerAndroid
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             _permissionsHelpers = new PermissionsHelpers(this);
             _adapter.ScanMode = Plugin.BLE.Abstractions.Contracts.ScanMode.Balanced;
-            _adapter.DeviceDiscovered += _adapter_DeviceDiscovered;
+            _adapter.DeviceDiscovered += OnDeviceDiscovered;
             _timer = new System.Timers.Timer(TimeSpan.FromMilliseconds(200));
             _timer.Elapsed += _timer_Elapsed;
 
@@ -59,12 +65,17 @@ namespace RacingCarsControllerAndroid
 
             scanButton = FindViewById<Button>(Resource.Id.buttonScan);
             scanButton.Click += ScanButton_Click;
+            scanProgressIndicator = FindViewById<LinearProgressIndicator>(Resource.Id.scanProgressIndicator);
+
             disconnectButton = FindViewById<Button>(Resource.Id.disconnectButton);
             disconnectButton.Click += DisconnectButton_Click;
 
-            var lightsButton = FindViewById<Button>(Resource.Id.buttonLights);
+            selectedCar_Layout = FindViewById<LinearLayout>(Resource.Id.selectedCar_Layout);
+            selectedCar_Layout.Visibility = Android.Views.ViewStates.Invisible;
+
+            lightsButton = FindViewById<Button>(Resource.Id.buttonLights);
             lightsButton.Click += LightsButton_Click;
-            var turboButton = FindViewById<Button>(Resource.Id.buttonTurbo);
+            turboButton = FindViewById<Button>(Resource.Id.buttonTurbo);
             turboButton.Click += TurboButton_Click;
 
             buttonForward = FindViewById<Button>(Resource.Id.buttonForward);
@@ -79,11 +90,13 @@ namespace RacingCarsControllerAndroid
         private void TurboButton_Click(object? sender, EventArgs e)
         {
             isTurboOn = !isTurboOn;
+            turboButton.Selected = isTurboOn;
         }
 
         private void LightsButton_Click(object? sender, EventArgs e)
         {
             isLightsOn = !isLightsOn;
+            lightsButton.Selected = isLightsOn;
         }
 
         private async void ScanButton_Click(object? sender, EventArgs e)
@@ -124,9 +137,12 @@ namespace RacingCarsControllerAndroid
             _timer.Start();
         }
 
-        private void _adapter_DeviceDiscovered(object? sender, Plugin.BLE.Abstractions.EventArgs.DeviceEventArgs e)
+        private void OnDeviceDiscovered(object? sender, Plugin.BLE.Abstractions.EventArgs.DeviceEventArgs e)
         {
-            MainThread.BeginInvokeOnMainThread(() => _deviceItemAdapter.Add(e.Device));
+            if (!string.IsNullOrEmpty(e.Device.Name))
+            {
+                MainThread.BeginInvokeOnMainThread(() => _deviceItemAdapter.Add(e.Device));
+            }
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Android.Content.PM.Permission[] grantResults)
@@ -152,6 +168,7 @@ namespace RacingCarsControllerAndroid
             var scanFilterOptions = new ScanFilterOptions();
             try
             {
+                scanProgressIndicator.Visibility = Android.Views.ViewStates.Visible;
                 var state = await _permissionsHelpers.CheckAndRequestBluetoothPermissions();
                 if (state != PermissionStatus.Granted) return;
                 scanButton.Text = "Stop scan";
@@ -167,6 +184,7 @@ namespace RacingCarsControllerAndroid
         {
             try
             {
+                scanProgressIndicator.Visibility = Android.Views.ViewStates.Invisible;
                 scanButton.Text = "Start scan";
                 await _adapter.StopScanningForDevicesAsync();
             }
@@ -198,6 +216,7 @@ namespace RacingCarsControllerAndroid
             {
                 _selectedCar = await ConnectDeviceAsync(device);
                 _selectedCar.BatteryLevelChanged += OnBatteryLevelChanged;
+                selectedCar_Layout.Visibility = Android.Views.ViewStates.Visible;
                 selectedCarTextView.Text = device.Name;
             }
         }
@@ -208,13 +227,14 @@ namespace RacingCarsControllerAndroid
             IRacingCar car = new UnknownCar();
             try
             {
-                await _adapter.ConnectToDeviceAsync(device);
                 if (FerrariCar.IsSupportedModel(device.Name))
                 {
+                    await _adapter.ConnectToDeviceAsync(device);
                     car = new FerrariCar(new AndroidBLEDevice(device), new SystemDiagnosticsLogger());
                 }
                 else if (BrandbaseCar.IsSupportedModel(device.Name))
                 {
+                    await _adapter.ConnectToDeviceAsync(device);
                     car = new BrandbaseCar(new AndroidBLEDevice(device), new SystemDiagnosticsLogger());
                 }
             }
@@ -236,11 +256,10 @@ namespace RacingCarsControllerAndroid
                 _selectedCar.BatteryLevelChanged -= OnBatteryLevelChanged;
                 await _selectedCar.DisposeAsync();
                 _selectedCar = null;
-                //devicesList.SelectedItem = null;
 
+                selectedCar_Layout.Visibility = Android.Views.ViewStates.Invisible;
                 selectedCarTextView.Text = "";
                 selectedCarBatteryTextView.Text = "";
-                //battery_Panel.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -256,7 +275,6 @@ namespace RacingCarsControllerAndroid
         {
             selectedCarBatteryTextView.Text = $"{level}%";
             //selectedCarBattery_Icon.Glyph = BatteryLevelToIcon(level);
-            //battery_Panel.Visibility = Visibility.Visible;
         }
 
         public static void LogMessage(string text)

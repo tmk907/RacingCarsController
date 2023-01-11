@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style name="Theme.Custom" parent="Theme.AppCompat.DayNight"><item name="android:colorPrimary">#ffffc400</item></style>
+</resources>

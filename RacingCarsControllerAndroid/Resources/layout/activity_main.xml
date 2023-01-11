@@ -1,28 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="@string/app_name"
+            style="@style/Widget.MaterialComponents.Toolbar.Primary" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_height="0dp"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_weight="1"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:orientation="vertical"
             android:gravity="center">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonScan"
-                android:layout_width="100dp"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
-                android:text="Scan devices"/>
+                android:text="Scan devices"
+                style="@style/Widget.MaterialComponents.Button"/>
 
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/scanProgressIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:max="100"
+                android:indeterminate="true"
+                android:visibility="invisible" />
+            
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/devicesList"
                 android:layout_width="match_parent"
@@ -30,92 +58,119 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:id="@+id/selectedCar_Layout"
+            android:layout_width="match_parent"
             android:layout_weight="1"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:orientation="vertical"
+            android:visibility="visible"
             android:gravity="center">
-
-            <Button
-                android:id="@+id/disconnectButton"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:text="Disconnect" />
 
             <TextView
                 android:id="@+id/selectedCarName_Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="" />
+                android:fontFamily="@font/roboto"
+                android:text=""
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textSize="20sp"
+                tools:text="Car name" />
 
             <TextView
                 android:id="@+id/selectedCarBattery_Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="" />
+                android:text=""
+                tools:text="80%"
+                android:fontFamily="@font/roboto"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/disconnectButton"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:text="Disconnect"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
         </LinearLayout>
 
         <TableLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="2"
-            android:gravity="center_vertical">
+            android:gravity="center">
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center"
                 >
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonLights"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    app:icon="@drawable/ic_baseline_highlight_24"
+                    android:layout_margin="4dp"
+                    app:icon="@drawable/ic_baseline_light_mode_48"
                     app:iconGravity="textStart"
-                    app:iconPadding="0dp"/>
+                    app:iconPadding="0dp"
+                    android:textColor="@color/button_text_selector"
+                    app:backgroundTint="@color/button_tint_selector" 
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonForward"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    app:icon="@drawable/ic_baseline_arrow_upward_24"
+                    android:layout_margin="4dp"
+                    app:icon="@drawable/ic_baseline_arrow_upward_48"
                     app:iconGravity="textStart"
-                    app:iconPadding="0dp"/>
+                    app:iconPadding="0dp"
+                    style="@style/Widget.MaterialComponents.Button"/>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonTurbo"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    app:icon="@drawable/ic_baseline_speed_24"
+                    android:layout_margin="4dp"
+                    app:icon="@drawable/ic_baseline_speed_48"
                     app:iconGravity="textStart"
-                    app:iconPadding="0dp"/>
+                    app:iconPadding="0dp"
+                    android:textColor="@color/button_text_selector"
+                    app:backgroundTint="@color/button_tint_selector" 
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
             </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent"
+                android:gravity="center">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonLeft"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    app:icon="@drawable/ic_baseline_arrow_back_24"
+                    android:layout_margin="4dp"
+                    app:icon="@drawable/ic_baseline_arrow_back_48"
                     app:iconGravity="textStart"
                     app:iconPadding="0dp"/>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonBackward"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    app:icon="@drawable/ic_baseline_arrow_downward_24"
+                    android:layout_margin="4dp"
+                    app:icon="@drawable/ic_baseline_arrow_downward_48"
                     app:iconGravity="textStart"
                     app:iconPadding="0dp"/>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonRight"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    app:icon="@drawable/ic_baseline_arrow_forward_24"
+                    android:layout_margin="4dp"
+                    app:icon="@drawable/ic_baseline_arrow_forward_48"
                     app:iconGravity="textStart"
                     app:iconPadding="0dp"/>
             </TableRow>

@@ -16,7 +16,15 @@
     <None Remove="Resources\drawable\ic_baseline_arrow_upward_24.xml" />
     <None Remove="Resources\drawable\ic_baseline_highlight_24.xml" />
     <None Remove="Resources\drawable\ic_baseline_speed_24.xml" />
+    <None Remove="Resources\font\roboto.xml" />
     <None Remove="Resources\layout\device_item.xml" />
+    <None Remove="Resources\values\backgroundTintColorSelector.xml" />
+    <None Remove="Resources\values\colors.xml" />
+    <None Remove="Resources\values\font_certs.xml" />
+    <None Remove="Resources\values\preloaded_fonts.xml" />
+    <None Remove="Resources\values\style.xml" />
+    <None Remove="Resources\values\textColorSelector.xml" />
+    <None Remove="Resources\values\themes.xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Plugin.BLE" Version="3.0.0-beta.2" />
