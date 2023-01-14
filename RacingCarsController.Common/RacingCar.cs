@@ -42,7 +42,7 @@
         {
             if (command.IsNotMovingAndHaveSameState(_previousCommand))
             {
-                _logger.Log($"Is not moving and has same state {command}");
+                //_logger.Log($"Is not moving and has same state {command}");
                 return;
             }
             if (IgnoreSubsequentSameCommands && command == _previousCommand)

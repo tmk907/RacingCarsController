@@ -23,14 +23,19 @@ namespace RacingCarsControllerAndroid
         }
 
 
-        public async Task SubscribeToNotifications(string serviceUUID, string characteristicsUUID)
+        public async Task SubscribeToNotifications(string serviceUUID, string characteristicsUUID, CancellationToken cancellationToken)
         {
             try
             {
-                var characteristic = await GetCharacteristicAsync(serviceUUID, characteristicsUUID);
+                var characteristic = await GetCharacteristicAsync(serviceUUID, characteristicsUUID, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
                 characteristic.ValueUpdated += Characteristic_ValueUpdated;
                 _notificationsCharacteristicUUIDs.Add(characteristicsUUID);
-                await characteristic.StartUpdatesAsync();
+                await characteristic.StartUpdatesAsync(cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.Log($"{nameof(SubscribeToNotifications)} canceled");
             }
             catch (Exception ex)
             {
@@ -38,33 +43,39 @@ namespace RacingCarsControllerAndroid
             }
         }
 
-        public async Task WriteCharacteristics(string serviceUUID, string characteristicsUUID, byte[] data)
+        public async Task WriteCharacteristics(string serviceUUID, string characteristicsUUID, byte[] data, CancellationToken cancellationToken)
         {
             try
             {
-                var characteristic = await GetCharacteristicAsync(serviceUUID, characteristicsUUID);
-
-                var success = await characteristic.WriteAsync(data);
+                var characteristic = await GetCharacteristicAsync(serviceUUID, characteristicsUUID, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                var success = await characteristic.WriteAsync(data, cancellationToken);
                 if (success)
                 {
                     _logger.Log("Message sent sucessfully");
                 }
                 else
                 {
-                    _logger.Log($"Could not write characteristics.");
+                    _logger.Log($"Message was not send");
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.Log($"{nameof(WriteCharacteristics)} canceled");
             }
             catch (Exception ex)
             {
+                _logger.Log("Write characteristics error:");
                 _logger.Log(ex.ToString());
             }
         }
 
-        private async Task<ICharacteristic> GetCharacteristicAsync(string serviceUUID, string characteristicsUUID)
+        private async Task<ICharacteristic> GetCharacteristicAsync(string serviceUUID, string characteristicsUUID, CancellationToken cancellationToken)
         {
             if (_cachedCharacteristics.ContainsKey(characteristicsUUID)) return _cachedCharacteristics[characteristicsUUID];
 
-            var service = await Device.GetServiceAsync(Guid.Parse(serviceUUID));
+            var service = await Device.GetServiceAsync(Guid.Parse(serviceUUID), cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
 
             if (service != null)
             {

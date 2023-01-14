@@ -36,10 +36,9 @@ namespace RacingCarsControllerAndroid
             return new ItemViewHolder(itemView, OnClick);
         }
 
-        public void Replace(List<IDevice> devices)
+        public void Clear()
         {
             _devices.Clear();
-            _devices.AddRange(devices);
             NotifyDataSetChanged();
         }
 
