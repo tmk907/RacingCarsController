@@ -9,12 +9,12 @@
             return ValueTask.CompletedTask;
         }
 
-        public Task SubscribeToNotifications(string serviceUUID, string characteristicsUUID)
+        public Task SubscribeToNotifications(string serviceUUID, string characteristicsUUID, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }
 
-        public Task WriteCharacteristics(string serviceUUID, string characteristicsUUID, byte[] data)
+        public Task WriteCharacteristics(string serviceUUID, string characteristicsUUID, byte[] data, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }

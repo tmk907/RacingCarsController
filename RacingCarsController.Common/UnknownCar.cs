@@ -14,7 +14,7 @@
 
         public override string BatteryCharacteristicUUID => throw new NotImplementedException();
 
-        public override Task SendCommandAsync(CarCommand command)
+        public override Task SendCommandAsync(CarCommand command, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }

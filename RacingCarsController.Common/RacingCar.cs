@@ -4,7 +4,7 @@
     {
         event EventHandler<int> BatteryLevelChanged;
 
-        Task SendCommandAsync(CarCommand command);
+        Task SendCommandAsync(CarCommand command, CancellationToken cancellationToken);
         Task SubscribeToBatteryNotifications();
     }
 
@@ -38,7 +38,7 @@
             OnBatteryLevelChanged(level);
         }
 
-        public virtual async Task SendCommandAsync(CarCommand command)
+        public virtual async Task SendCommandAsync(CarCommand command, CancellationToken cancellationToken)
         {
             if (IgnoreSubsequentSameCommands && command == _previousCommand)
             {
@@ -49,12 +49,12 @@
             _logger.Log($"Send command {command}");
 
             var data = PreparePayload(command);
-            await Device.WriteCharacteristics(ControlServiceUUID, ControlCharacteristicUUID, data);
+            await Device.WriteCharacteristics(ControlServiceUUID, ControlCharacteristicUUID, data, cancellationToken);
         }
 
         public virtual async Task SubscribeToBatteryNotifications()
         {
-            await Device.SubscribeToNotifications(BatteryServiceUUID, BatteryCharacteristicUUID);
+            await Device.SubscribeToNotifications(BatteryServiceUUID, BatteryCharacteristicUUID, CancellationToken.None);
         }
 
         protected abstract byte[] PreparePayload(CarCommand command);
