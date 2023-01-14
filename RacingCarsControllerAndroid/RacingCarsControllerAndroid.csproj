@@ -9,6 +9,7 @@
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
   </PropertyGroup>
+	
   <ItemGroup>
     <None Remove="Resources\drawable\ic_baseline_arrow_back_24.xml" />
     <None Remove="Resources\drawable\ic_baseline_arrow_downward_24.xml" />
@@ -26,12 +27,33 @@
     <None Remove="Resources\values\textColorSelector.xml" />
     <None Remove="Resources\values\themes.xml" />
   </ItemGroup>
+	
   <ItemGroup>
     <PackageReference Include="Plugin.BLE" Version="3.0.0-beta.2" />
     <PackageReference Include="Xamarin.Essentials" Version="1.7.4" />
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.7.0.1" />
   </ItemGroup>
+	
   <ItemGroup>
     <ProjectReference Include="..\RacingCarsController.Common\RacingCarsController.Common.csproj" />
   </ItemGroup>
+	
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <AndroidKeyStore>True</AndroidKeyStore>
+    <AndroidSigningKeyStore>racingcarscontrollerandroid.keystore</AndroidSigningKeyStore>
+    <AndroidSigningKeyAlias>key</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass></AndroidSigningKeyPass>
+    <AndroidSigningStorePass></AndroidSigningStorePass>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AndroidCreatePackagePerAbi>True</AndroidCreatePackagePerAbi>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <AndroidUseAapt2>True</AndroidUseAapt2>
+  </PropertyGroup>	
+	
 </Project>
