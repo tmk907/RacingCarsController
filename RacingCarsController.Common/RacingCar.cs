@@ -40,6 +40,11 @@
 
         public virtual async Task SendCommandAsync(CarCommand command, CancellationToken cancellationToken)
         {
+            if (command.IsNotMovingAndHaveSameState(_previousCommand))
+            {
+                _logger.Log($"Is not moving and has same state {command}");
+                return;
+            }
             if (IgnoreSubsequentSameCommands && command == _previousCommand)
             {
                 _logger.Log($"Don't send command {command}");
