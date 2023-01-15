@@ -1,0 +1,98 @@
+# This workflow will build, sign, and package a WinUI 3 MSIX desktop application
+# built on .NET.
+
+name: Build packages
+
+on: 
+  workflow_dispatch:
+    inputs:
+      input_app_version:
+        description: 'Application version'
+        required: true
+        default: '1.0.0'
+
+jobs:
+
+  build:
+
+    runs-on: windows-latest
+
+    env:
+      Solution_Name: RacingCarsController.sln
+      Project_Path: RacingCarsControllerAndroid/RacingCarsControllerAndroid.csproj
+      Publish_Directory: RacingCarsControllerAndroid/bin/Release/net7.0-android/publish
+      Project_Directory: RacingCarsControllerAndroid
+      
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    # Update the appxmanifest before build by setting the per-channel values set in the matrix.
+    - name: Change Version
+      run: |
+        # Get current version code and increment
+        $manifestPath = 'RacingCarsControllerAndroid/AndroidManifest.xml'
+        [xml]$manifest = Get-Content -Path $manifestPath
+        $newVersionCode = ([int]$manifest.manifest.versionCode + 1).ToString()
+
+        $csprojPath = $env:Project_Path
+        
+        # Update manifest
+        (Get-Content $manifestPath) -Replace 'android:versionCode="\d+"', "android:versionCode=`"${newVersionCode}`"" | Set-Content $manifestPath
+        (Get-Content $manifestPath) -Replace 'android:versionName="[\w\d.-]+"', "android:versionName=`"$newVersionName`"" | Set-Content $manifestPath
+
+        # Update project
+        (Get-Content $csprojPath) -Replace '<ApplicationVersion>\d+</ApplicationVersion>', "<ApplicationVersion>$newVersionCode</ApplicationVersion>" | Set-Content $csprojPath
+        (Get-Content $csprojPath) -Replace '<ApplicationDisplayVersion>[\w\d.-]+</ApplicationDisplayVersion>', "<ApplicationDisplayVersion>$newVersionName</ApplicationDisplayVersion>" | Set-Content $csprojPath
+
+        Write-Host "New versionName: $newVersionName, new versionCode: $newVersionCode"
+
+    - name: Setup .NET 7
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Install MAUI Android Workload
+      run: dotnet workload install maui-android --ignore-failed-sources
+
+    - name: Restore Dependencies
+      run: dotnet restore $env:Project_Path
+
+    - name: Build Android
+      run: dotnet publish $env:Project_Path -c Release -f net7.0-android /p:AndroidSigningKeyPass=${{ secrets.SIGNING_KEY_PASS }} /p:AndroidSigningStorePass=${{ secrets.SIGNING_KEY_PASS }}
+
+
+    # Move package
+    - name: Move package
+      run: |
+        $appName = 'RacingCarsController'
+        $package = 'com.tmk907.RacingCarsControllerAndroid'
+        $architectures = @('arm64-v8a','armeabi-v7a','x86_64')
+        foreach($arch in $architectures){
+            $apkName = "$package-$arch-Signed.apk"
+            $publishedApkName = "$appName-v${{ inputs.input_app_version }}-$arch.apk"
+
+            Move-Item -Path "$env:Publish_Directory\$apkName" -Destination ./
+            Write-Host "$publishedApkName moved"
+        }
+
+    # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
+    - name: Upload MSIX package
+      uses: actions/upload-artifact@v2
+      with:
+        name: RacingCarsControllerAndroid
+        path: |
+          ./*.apk
+        
+    - name: Create a GitHub release
+      uses: ncipollo/release-action@v1
+      with:
+        tag: ${{ inputs.input_app_version }}
+        name: Release Android ${{ inputs.input_app_version }}
+        artifacts: "./*.apk"
+        generateReleaseNotes: true
+        allowUpdates: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+
