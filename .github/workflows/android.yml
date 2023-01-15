@@ -1,7 +1,7 @@
 # This workflow will build, sign, and package a WinUI 3 MSIX desktop application
 # built on .NET.
 
-name: Build packages
+name: Build Android app
 
 on: 
   workflow_dispatch:
@@ -34,11 +34,10 @@ jobs:
       run: |
         # Get current version code and increment
         $manifestPath = 'RacingCarsControllerAndroid/AndroidManifest.xml'
-        [xml]$manifest = Get-Content -Path $manifestPath
-        $newVersionCode = ([int]$manifest.manifest.versionCode + 1).ToString()
-
+        $newVersionCode = git rev-list HEAD --count
+        $newVersionName = ${{ inputs.input_app_version }}
         $csprojPath = $env:Project_Path
-        
+
         # Update manifest
         (Get-Content $manifestPath) -Replace 'android:versionCode="\d+"', "android:versionCode=`"${newVersionCode}`"" | Set-Content $manifestPath
         (Get-Content $manifestPath) -Replace 'android:versionName="[\w\d.-]+"', "android:versionName=`"$newVersionName`"" | Set-Content $manifestPath
