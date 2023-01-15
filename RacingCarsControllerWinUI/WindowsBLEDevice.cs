@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
@@ -24,7 +25,7 @@ namespace RacingCarsControllerWinUI
             Device = device;
         }
 
-        public async Task WriteCharacteristics(string serviceUUID, string characteristicsUUID, byte[] data)
+        public async Task WriteCharacteristics(string serviceUUID, string characteristicsUUID, byte[] data, CancellationToken cancellationToken = default)
         {
             var writer = new DataWriter();
             writer.WriteBytes(data);
@@ -49,7 +50,7 @@ namespace RacingCarsControllerWinUI
             }
         }
 
-        public async Task SubscribeToNotifications(string serviceUUID, string characteristicsUUID)
+        public async Task SubscribeToNotifications(string serviceUUID, string characteristicsUUID, CancellationToken cancellationToken = default)
         {
             try
             {

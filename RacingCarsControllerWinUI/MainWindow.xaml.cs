@@ -5,6 +5,7 @@ using RacingCarsController.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Enumeration;
@@ -50,7 +51,7 @@ namespace RacingCarsControllerWinUI
                     buttonLights.IsChecked ?? false,
                     buttonTurbo.IsChecked ?? false);
 
-                await _selectedCar.SendCommandAsync(command);
+                await _selectedCar.SendCommandAsync(command, CancellationToken.None);
             }
         }
 
