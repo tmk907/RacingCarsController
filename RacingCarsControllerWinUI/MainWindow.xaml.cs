@@ -27,7 +27,7 @@ namespace RacingCarsControllerWinUI
             var manager = WinUIEx.WindowManager.Get(this);
             manager.Width = 640;
             manager.Height = 400;
-            Title = "Racing Cars Controller";
+            Title = Windows.ApplicationModel.Package.Current.DisplayName;
 
             this.InitializeComponent();
             _bluetoothLEHelper.EnumerationCompleted += BluetoothLEHelper_EnumerationCompleted;

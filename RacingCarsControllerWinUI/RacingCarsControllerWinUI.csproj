@@ -26,7 +26,16 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
     <PackageReference Include="WinUIEx" Version="2.1.0" />
-    <Manifest Include="$(ApplicationManifest)" />
+    <!-- <Manifest Include="$(ApplicationManifest)" /> -->
+  </ItemGroup>
+  
+  <ItemGroup>
+	<AppxManifest Include="Package.appxmanifest" Condition="'$(Configuration)'=='Release'">
+		<SubType>Designer</SubType>
+	</AppxManifest>
+	<AppxManifest Include="Package.debug.appxmanifest" Condition="'$(Configuration)'=='Debug'">
+		<SubType>Designer</SubType>
+	</AppxManifest>
   </ItemGroup>
 
   <!-- 
