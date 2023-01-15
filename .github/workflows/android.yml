@@ -9,6 +9,7 @@ on:
       input_app_version:
         description: 'Application version'
         required: true
+        type: string
         default: '1.0.0'
 
 jobs:
@@ -33,10 +34,10 @@ jobs:
     - name: Change Version
       run: |
         # Get current version code and increment
-        $manifestPath = 'RacingCarsControllerAndroid/AndroidManifest.xml'
+        $manifestPath = "$env:Project_Directory/AndroidManifest.xml"
+        $csprojPath = $env:Project_Path
         $newVersionCode = git rev-list HEAD --count
         $newVersionName = ${{ inputs.input_app_version }}
-        $csprojPath = $env:Project_Path
 
         # Update manifest
         (Get-Content $manifestPath) -Replace 'android:versionCode="\d+"', "android:versionCode=`"${newVersionCode}`"" | Set-Content $manifestPath
@@ -46,7 +47,6 @@ jobs:
         (Get-Content $csprojPath) -Replace '<ApplicationVersion>\d+</ApplicationVersion>', "<ApplicationVersion>$newVersionCode</ApplicationVersion>" | Set-Content $csprojPath
         (Get-Content $csprojPath) -Replace '<ApplicationDisplayVersion>[\w\d.-]+</ApplicationDisplayVersion>', "<ApplicationDisplayVersion>$newVersionName</ApplicationDisplayVersion>" | Set-Content $csprojPath
 
-        Write-Host "New versionName: $newVersionName, new versionCode: $newVersionCode"
 
     - name: Setup .NET 7
       uses: actions/setup-dotnet@v2
@@ -88,7 +88,7 @@ jobs:
     - name: Create a GitHub release
       uses: ncipollo/release-action@v1
       with:
-        tag: ${{ inputs.input_app_version }}
+        tag: android-v${{ inputs.input_app_version }}
         name: Release Android ${{ inputs.input_app_version }}
         artifacts: "./*.apk"
         generateReleaseNotes: true

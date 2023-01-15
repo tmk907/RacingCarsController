@@ -135,7 +135,7 @@ jobs:
       uses: ncipollo/release-action@v1
       if: matrix.ChannelName == 'Prod_Sideload'
       with:
-        tag: ${{ env.App_Version }}
+        tag: desktop-v${{ env.App_Version }}
         name: Release Desktop ${{ env.App_Version }}
         artifacts: "./*.msix,./*.cer"
         generateReleaseNotes: true
