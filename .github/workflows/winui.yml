@@ -1,0 +1,144 @@
+# This workflow will build, sign, and package a WinUI 3 MSIX desktop application
+# built on .NET.
+
+name: Build packages
+
+on: 
+  workflow_dispatch:
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        channel: [Prod_Sideload,Prod_Store]
+        configuration: [Release]
+        targetplatform: [x64]
+        include:
+          
+          # includes the following variables for the matrix leg matching Prod_Sideload
+          - channel: Prod_Sideload
+            Configuration: Release
+            ChannelName: Prod_Sideload
+            MsixPackageId: DryForest.RacingCarsController
+            MsixPublisherId: CN=DryForest
+            MsixPackageDisplayName: Racing Cars Controller
+
+          # includes the following variables for the matrix leg matching Prod_Store
+          - channel: Prod_Store
+            Configuration: Release
+            ChannelName: Prod_Store
+            MsixPackageId: 60490polApki.RacingCarsController
+            MsixPublisherId: CN=EFEE17C1-DC2A-4553-8CE6-82B55CBC72FE
+            MsixPackageDisplayName: Racing Cars Controller
+
+    runs-on: windows-latest  # For a list of available runner types, refer to
+                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+
+    env:
+      Solution_Name: RacingCarsController.sln
+      Project_Path: RacingCarsControllerWinUI/RacingCarsControllerWinUI.csproj
+      App_Version: 1.0.0
+      SigningCertificate: GitHubActionsWorkflow.pfx
+      Project_Directory: RacingCarsControllerWinUI
+      
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Get app version from manifest
+      run: |
+        [xml]$manifest = get-content ".\$env:Project_Directory\Package.appxmanifest"
+        $appVersion = [System.Version]::Parse($manifest.Package.Identity.Version).ToString(3)
+        echo "App_Version=$appVersion"  | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+
+    # Update the appxmanifest before build by setting the per-channel values set in the matrix.
+    - name: Update manifest
+      run: |
+        [xml]$manifest = get-content ".\$env:Project_Directory\Package.appxmanifest"
+        $manifest.Package.Identity.Name = "${{ matrix.MsixPackageId }}"
+        $manifest.Package.Identity.Publisher = "${{ matrix.MsixPublisherId }}"
+        $manifest.Package.Properties.DisplayName = "${{ matrix.MsixPackageDisplayName }}"
+        $manifest.Package.Applications.Application.VisualElements.DisplayName = "${{ matrix.MsixPackageDisplayName }}"
+        $manifest.save(".\$env:Project_Directory\Package.appxmanifest")
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    - name: Restore the application
+      run: msbuild $env:Project_Path /t:Restore /p:Configuration=$env:Configuration
+      env:
+        Configuration: ${{ matrix.configuration }}
+
+    # Decode the base 64 encoded pfx and save the Signing_Certificate
+    - name: Decode the pfx
+      run: |
+        $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
+        $certificatePath = "$env:Project_Directory/GitHubActionsWorkflow.pfx"
+        [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+
+    # Create the app package by building and packaging the project Prod_Sideload
+    - name: Create the app package by building and packaging the project for Prod_Sideload
+      run: msbuild $env:Project_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:AppxBundle /p:AppxPackageDir="$env:Appx_Package_Dir" /p:GenerateAppxPackageOnBuild=true /p:PackageCertificateKeyFile=$env:SigningCertificate 
+      if: matrix.ChannelName == 'Prod_Sideload'
+      env:
+        AppxBundle: Never
+        Appx_Package_Build_Mode: SideLoadOnly
+        Appx_Package_Dir: Packages\
+        Configuration: ${{ matrix.Configuration }}
+        TargetPlatform: ${{ matrix.targetplatform }}
+        
+    # Create the app package by building and packaging the project for Prod_Store
+    - name: Create the app package by building and packaging the project for Prod_Store
+      run: msbuild $env:Project_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:AppxBundle /p:AppxPackageDir="$env:Appx_Package_Dir" /p:GenerateAppxPackageOnBuild=true /p:AppxPackageSigningEnabled=$env:AppxPackageSigningEnabled 
+      if: matrix.ChannelName == 'Prod_Store'
+      env:
+        AppxBundle: Never
+        AppxPackageSigningEnabled: False
+        Appx_Package_Build_Mode: StoreOnly
+        Appx_Package_Dir: Packages\
+        Configuration: ${{ matrix.Configuration }}
+        TargetPlatform: ${{ matrix.targetplatform }}
+
+    # Remove the pfx
+    - name: Remove the pfx
+      run: |
+        Remove-Item -path $env:Project_Directory/GitHubActionsWorkflow.pfx
+
+    # Move package
+    - name: Move package
+      run: |
+        Move-Item $env:Project_Directory/Packages/RacingCarsController*/*.msix ./
+        Move-Item $env:Project_Directory/Packages/RacingCarsController*/*.cer ./
+
+    # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
+    - name: Upload MSIX package
+      uses: actions/upload-artifact@v2
+      with:
+        name: RacingCarsController ${{ matrix.platform }} ${{ matrix.ChannelName }}
+        path: |
+          ./*.msix
+          ./*.cer
+        
+    - name: Create a GitHub release
+      uses: ncipollo/release-action@v1
+      if: matrix.ChannelName == 'Prod_Sideload'
+      with:
+        tag: ${{ env.App_Version }}
+        name: Release ${{ env.App_Version }}
+        artifacts: "./*.msix,./*.cer"
+        generateReleaseNotes: true
+        allowUpdates: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+
