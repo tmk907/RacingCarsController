@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Build": {
+      "commandName": "Project",
+      //"commandLineArgs": "--target=Publish --appVersion=0.1 --SigningKeyPass="
+    }
+  }
+}
