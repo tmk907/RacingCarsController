@@ -1,6 +1,6 @@
 # Racing Cars Controller
 
-Android and Windows apps to control Bluetooth cars from the Shell Motorsport collection, BMW M Motorsport collection and Ferrari Shell Racing Legends.
+Android and Windows apps to control Bluetooth cars from the Shell Motorsport collection, BMW M Motorsport collection and Shell Racing Legends - Ferrari collections.
 
 ## Download
 
