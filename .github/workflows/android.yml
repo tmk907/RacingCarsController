@@ -1,6 +1,3 @@
-# This workflow will build, sign, and package a WinUI 3 MSIX desktop application
-# built on .NET.
-
 name: Build Android app
 
 on: 
@@ -21,7 +18,7 @@ jobs:
     env:
       Solution_Name: RacingCarsController.sln
       Project_Path: RacingCarsControllerAndroid/RacingCarsControllerAndroid.csproj
-      Publish_Directory: RacingCarsControllerAndroid/bin/Release/net7.0-android/publish
+      Publish_Directory: RacingCarsControllerAndroid/bin/Release/net8.0-android/publish
       Project_Directory: RacingCarsControllerAndroid
       
     steps:
@@ -48,7 +45,7 @@ jobs:
         (Get-Content $csprojPath) -Replace '<ApplicationDisplayVersion>[\w\d.-]+</ApplicationDisplayVersion>', "<ApplicationDisplayVersion>$newVersionName</ApplicationDisplayVersion>" | Set-Content $csprojPath
 
 
-    - name: Setup .NET 7
+    - name: Setup .NET 8
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.0.x

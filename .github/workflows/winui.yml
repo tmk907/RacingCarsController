@@ -65,8 +65,8 @@ jobs:
         $manifest.Package.Applications.Application.VisualElements.DisplayName = "${{ matrix.MsixPackageDisplayName }}"
         $manifest.save(".\$env:Project_Directory\Package.appxmanifest")
 
-    # Install the .NET Core workload
-    - name: Install .NET Core
+    # Install the .NET workload
+    - name: Install .NET 8
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.0.x
