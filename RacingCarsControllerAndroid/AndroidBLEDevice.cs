@@ -49,14 +49,14 @@ namespace RacingCarsControllerAndroid
             {
                 var characteristic = await GetCharacteristicAsync(serviceUUID, characteristicsUUID, cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
-                var success = await characteristic.WriteAsync(data, cancellationToken);
-                if (success)
+                var errorCode = await characteristic.WriteAsync(data, cancellationToken);
+                if (errorCode == 0)
                 {
                     _logger.Log("Message sent sucessfully");
                 }
                 else
                 {
-                    _logger.Log($"Message was not send");
+                    _logger.Log($"Message was not send {errorCode}");
                 }
             }
             catch (OperationCanceledException)

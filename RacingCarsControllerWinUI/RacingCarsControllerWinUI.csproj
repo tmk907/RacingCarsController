@@ -23,9 +23,9 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Connectivity" Version="7.1.2" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
-    <PackageReference Include="WinUIEx" Version="2.1.0" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231115000" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428" />
+    <PackageReference Include="WinUIEx" Version="2.3.3" />
     <!-- <Manifest Include="$(ApplicationManifest)" /> -->
   </ItemGroup>
   
