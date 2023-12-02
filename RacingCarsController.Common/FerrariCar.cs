@@ -15,8 +15,13 @@
         public static bool IsSupportedModel(string name)
         {
             return name == "SL-FXX-K Evo"
+                || name == "SL-488 GTE"
                 || name == "SL-SF1000"
-                || name == "SL-488 Challenge Evo";
+                || name == "SL-488 Challenge Evo"
+                || name == "SL-F1-75"
+                || name == "SL-Daytona SP3"
+                || name == "SL-296 GTB"
+                || name == "SL-330 P4(1967)";
         }
 
         protected override byte[] PreparePayload(CarCommand command)
