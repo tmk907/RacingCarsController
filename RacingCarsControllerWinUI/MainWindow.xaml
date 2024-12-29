@@ -9,6 +9,7 @@
     mc:Ignorable="d">
 
     <Grid Background="#fbd426">
+        <InfoBar x:Name="infoBar" />
         <StackPanel
             HorizontalAlignment="Center"
             VerticalAlignment="Center"

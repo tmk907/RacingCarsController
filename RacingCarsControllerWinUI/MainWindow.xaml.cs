@@ -94,6 +94,7 @@ namespace RacingCarsControllerWinUI
             catch (Exception ex)
             {
                 App.WriteDebug(ex.ToString());
+                ShowError("Can't connect with device");
             }
             await car.SubscribeToBatteryNotifications();
             return car;
@@ -113,16 +114,32 @@ namespace RacingCarsControllerWinUI
 
         private void StopScan()
         {
-            _bluetoothLEHelper.StopEnumeration();
-            scanDevicesButton.Content = "Start scan";
-            scan_Progress.Visibility = Visibility.Collapsed;
+            try
+            {
+                _bluetoothLEHelper.StopEnumeration();
+                scanDevicesButton.Content = "Start scan";
+                scan_Progress.Visibility = Visibility.Collapsed;
+            }
+            catch (Exception ex)
+            {
+                ShowError(ex.Message);
+            }
         }
 
         private void StartScan()
         {
-            _bluetoothLEHelper.StartEnumeration();
-            scanDevicesButton.Content = "Stop scan";
-            scan_Progress.Visibility = Visibility.Visible;
+            try
+            {
+                _bluetoothLEHelper.StartEnumeration();
+                scanDevicesButton.Content = "Stop scan";
+                scan_Progress.Visibility = Visibility.Visible;
+            }
+            catch (Exception ex)
+            {
+                ShowError("An error occurred while starting the scan. Make sure Bluetooth is turned on.");
+                scanDevicesButton.Content = "Start scan";
+                scan_Progress.Visibility = Visibility.Collapsed;
+            }
         }
 
         private async void deviceSelected(object sender, Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs e)
@@ -225,6 +242,14 @@ namespace RacingCarsControllerWinUI
             {
                 return "\uE850";
             }
+        }
+
+        private void ShowError(string message)
+        {
+            infoBar.Severity = Microsoft.UI.Xaml.Controls.InfoBarSeverity.Error;
+            infoBar.Title = "Error";
+            infoBar.Message = message;
+            infoBar.IsOpen = true;
         }
     }
 }
