@@ -90,7 +90,7 @@ jobs:
 
     # Create the app package by building and packaging the project Prod_Sideload
     - name: Create the app package by building and packaging the project for Prod_Sideload
-      run: msbuild $env:Project_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:AppxBundle /p:AppxPackageDir="$env:Appx_Package_Dir" /p:GenerateAppxPackageOnBuild=true /p:PackageCertificateKeyFile=$env:SigningCertificate 
+      run: msbuild $env:Project_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:AppxBundle /p:AppxPackageDir="$env:Appx_Package_Dir" /p:GenerateAppxPackageOnBuild=true /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.PFX_PASSWORD }}
       if: matrix.ChannelName == 'Prod_Sideload'
       env:
         AppxBundle: Never
