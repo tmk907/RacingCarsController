@@ -7,13 +7,13 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="68bf15b5-2513-4197-8e10-9fd544c9e85d"
-    Publisher="CN=tomek"
-    Version="1.1.0.0" />
+    Name="60490polApki.RacingCarsController"
+    Publisher="CN=EFEE17C1-DC2A-4553-8CE6-82B55CBC72FE"
+    Version="1.1.1.0" />
 
   <Properties>
     <DisplayName>Racing Cars Controller</DisplayName>
-    <PublisherDisplayName>tomek</PublisherDisplayName>
+    <PublisherDisplayName>DryForest</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
