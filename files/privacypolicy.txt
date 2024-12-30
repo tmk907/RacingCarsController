@@ -1,0 +1,12 @@
+Privacy policy for AoE2DE Lobby Browser
+
+AoE2DE Lobby Browser does not read, collect or send:
+- personal user data
+- files from local device
+
+AoE2DE Lobby Browser may collect and send to Microsoft following data:
+- crash reports
+- anonymous app usage statistics
+These data are used to fix bugs and improve application.
+
+Last modified: 21 February 2022
