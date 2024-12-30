@@ -12,18 +12,18 @@ jobs:
 
     strategy:
       matrix:
-        channel: [Prod_Sideload,Prod_Store]
+        channel: [Prod_Store]
         configuration: [Release]
         targetplatform: [x64]
         include:
           
           # includes the following variables for the matrix leg matching Prod_Sideload
-          - channel: Prod_Sideload
-            Configuration: Release
-            ChannelName: Prod_Sideload
-            MsixPackageId: DryForest.RacingCarsController
-            MsixPublisherId: CN=DryForest
-            MsixPackageDisplayName: Racing Cars Controller
+          # - channel: Prod_Sideload
+          #   Configuration: Release
+          #   ChannelName: Prod_Sideload
+          #   MsixPackageId: DryForest.RacingCarsController
+          #   MsixPublisherId: CN=DryForest
+          #   MsixPackageDisplayName: Racing Cars Controller
 
           # includes the following variables for the matrix leg matching Prod_Store
           - channel: Prod_Store
@@ -73,7 +73,7 @@ jobs:
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v2
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
@@ -89,15 +89,15 @@ jobs:
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
     # Create the app package by building and packaging the project Prod_Sideload
-    - name: Create the app package by building and packaging the project for Prod_Sideload
-      run: msbuild $env:Project_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:AppxBundle /p:AppxPackageDir="$env:Appx_Package_Dir" /p:GenerateAppxPackageOnBuild=true /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.PFX_PASSWORD }}
-      if: matrix.ChannelName == 'Prod_Sideload'
-      env:
-        AppxBundle: Never
-        Appx_Package_Build_Mode: SideLoadOnly
-        Appx_Package_Dir: Packages\
-        Configuration: ${{ matrix.Configuration }}
-        TargetPlatform: ${{ matrix.targetplatform }}
+    # - name: Create the app package by building and packaging the project for Prod_Sideload
+    #   run: msbuild $env:Project_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:AppxBundle /p:AppxPackageDir="$env:Appx_Package_Dir" /p:GenerateAppxPackageOnBuild=true /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.PFX_PASSWORD }}
+    #   if: matrix.ChannelName == 'Prod_Sideload'
+    #   env:
+    #     AppxBundle: Never
+    #     Appx_Package_Build_Mode: SideLoadOnly
+    #     Appx_Package_Dir: Packages\
+    #     Configuration: ${{ matrix.Configuration }}
+    #     TargetPlatform: ${{ matrix.targetplatform }}
         
     # Create the app package by building and packaging the project for Prod_Store
     - name: Create the app package by building and packaging the project for Prod_Store
@@ -131,14 +131,14 @@ jobs:
           ./*.msix
           ./*.cer
         
-    - name: Create a GitHub release
-      uses: ncipollo/release-action@v1
-      if: matrix.ChannelName == 'Prod_Sideload'
-      with:
-        tag: desktop-v${{ env.App_Version }}
-        name: Release Desktop ${{ env.App_Version }}
-        artifacts: "./*.msix,./*.cer"
-        generateReleaseNotes: true
-        allowUpdates: true
-        token: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Create a GitHub release
+    #   uses: ncipollo/release-action@v1
+    #   if: matrix.ChannelName == 'Prod_Sideload'
+    #   with:
+    #     tag: desktop-v${{ env.App_Version }}
+    #     name: Release Desktop ${{ env.App_Version }}
+    #     artifacts: "./*.msix,./*.cer"
+    #     generateReleaseNotes: true
+    #     allowUpdates: true
+    #     token: ${{ secrets.GITHUB_TOKEN }}
 
