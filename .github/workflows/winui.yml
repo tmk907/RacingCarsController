@@ -66,10 +66,10 @@ jobs:
         $manifest.save(".\$env:Project_Directory\Package.appxmanifest")
 
     # Install the .NET workload
-    - name: Install .NET 8
+    - name: Install .NET 9
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe

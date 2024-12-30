@@ -18,7 +18,7 @@ jobs:
     env:
       Solution_Name: RacingCarsController.sln
       Project_Path: RacingCarsControllerAndroid/RacingCarsControllerAndroid.csproj
-      Publish_Directory: RacingCarsControllerAndroid/bin/Release/net8.0-android/publish
+      Publish_Directory: RacingCarsControllerAndroid/bin/Release/net9.0-android/publish
       Project_Directory: RacingCarsControllerAndroid
       
     steps:
@@ -45,10 +45,10 @@ jobs:
         (Get-Content $csprojPath) -Replace '<ApplicationDisplayVersion>[\w\d.-]+</ApplicationDisplayVersion>', "<ApplicationDisplayVersion>$newVersionName</ApplicationDisplayVersion>" | Set-Content $csprojPath
 
 
-    - name: Setup .NET 8
+    - name: Setup .NET 9
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
 
     - name: Install MAUI Android Workload
       run: dotnet workload install maui-android --ignore-failed-sources
@@ -57,7 +57,7 @@ jobs:
       run: dotnet restore $env:Project_Path
 
     - name: Build Android
-      run: dotnet publish $env:Project_Path -c Release -f net8.0-android /p:AndroidSigningKeyPass=${{ secrets.SIGNING_KEY_PASS }} /p:AndroidSigningStorePass=${{ secrets.SIGNING_KEY_PASS }}
+      run: dotnet publish $env:Project_Path -c Release -f net9.0-android /p:AndroidSigningKeyPass=${{ secrets.SIGNING_KEY_PASS }} /p:AndroidSigningStorePass=${{ secrets.SIGNING_KEY_PASS }}
 
 
     # Move package
