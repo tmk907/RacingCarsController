@@ -8,7 +8,10 @@ Android and Windows apps to control Bluetooth cars from the Shell Motorsport col
 https://github.com/tmk907/RacingCarsController/releases/tag/android-v1.1.1
 
 ### Windows
-https://github.com/tmk907/RacingCarsController/releases/tag/desktop-v1.1.1
+<a href='https://apps.microsoft.com/detail/9N8MXSKCDF9J?cid=github&mode=full'>
+	<img src='https://get.microsoft.com/images/pl-pl%20dark.svg' width='200' alt='Download from Microsoft Store'/>
+</a>
+
 
 
 ## Screenshots
