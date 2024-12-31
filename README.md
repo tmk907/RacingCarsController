@@ -9,7 +9,7 @@ https://github.com/tmk907/RacingCarsController/releases/tag/android-v1.1.1
 
 ### Windows
 <a href='https://apps.microsoft.com/detail/9N8MXSKCDF9J?cid=github&mode=full'>
-	<img src='https://get.microsoft.com/images/pl-pl%20dark.svg' width='200' alt='Download from Microsoft Store'/>
+	<img src='https://get.microsoft.com/images/en-us%20dark.svg' width='200' alt='Download from Microsoft Store'/>
 </a>
 
 
