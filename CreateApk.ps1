@@ -39,7 +39,7 @@ Function Build {
         $signingKeyPass
     )
 
-    dotnet publish -f:net7.0-android -c:Release /p:AndroidSigningKeyPass=$signingKeyPass /p:AndroidSigningStorePass=$signingKeyPass
+    dotnet publish -f:net11.0-android -c:Release /p:AndroidSigningKeyPass=$signingKeyPass /p:AndroidSigningStorePass=$signingKeyPass
 }
 
 Function CopyToLocalAppStore {
@@ -49,7 +49,7 @@ Function CopyToLocalAppStore {
         $versionName
     )
 
-    $publishDirectory = '.\RacingCarsControllerAndroid\bin\Release\net7.0-android\publish'
+    $publishDirectory = '.\RacingCarsControllerAndroid\bin\Release\net11.0-android\publish'
     $appStoreDirectory = 'C:\Source\AppStore'
     $appName = 'RacingCarsController'
 

@@ -23,7 +23,7 @@ jobs:
       
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
 
@@ -45,10 +45,10 @@ jobs:
         (Get-Content $csprojPath) -Replace '<ApplicationDisplayVersion>[\w\d.-]+</ApplicationDisplayVersion>', "<ApplicationDisplayVersion>$newVersionName</ApplicationDisplayVersion>" | Set-Content $csprojPath
 
 
-    - name: Setup .NET 9
-      uses: actions/setup-dotnet@v3
+    - name: Setup .NET 11
+      uses: actions/setup-dotnet@v6
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 11.0.x
 
     - name: Install MAUI Android Workload
       run: dotnet workload install maui-android --ignore-failed-sources
@@ -76,7 +76,7 @@ jobs:
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload MSIX package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: RacingCarsControllerAndroid
         path: |
