@@ -18,7 +18,7 @@ jobs:
     env:
       Solution_Name: RacingCarsController.sln
       Project_Path: RacingCarsControllerAndroid/RacingCarsControllerAndroid.csproj
-      Publish_Directory: RacingCarsControllerAndroid/bin/Release/net9.0-android/publish
+      Publish_Directory: RacingCarsControllerAndroid/bin/Release/net11.0-android/publish
       Project_Directory: RacingCarsControllerAndroid
       
     steps:
@@ -57,7 +57,7 @@ jobs:
       run: dotnet restore $env:Project_Path
 
     - name: Build Android
-      run: dotnet publish $env:Project_Path -c Release -f net9.0-android /p:AndroidSigningKeyPass=${{ secrets.SIGNING_KEY_PASS }} /p:AndroidSigningStorePass=${{ secrets.SIGNING_KEY_PASS }}
+      run: dotnet publish $env:Project_Path -c Release -f net11.0-android /p:AndroidSigningKeyPass=${{ secrets.SIGNING_KEY_PASS }} /p:AndroidSigningStorePass=${{ secrets.SIGNING_KEY_PASS }}
 
 
     # Move package
@@ -65,17 +65,14 @@ jobs:
       run: |
         $appName = 'RacingCarsController'
         $package = 'com.tmk907.RacingCarsControllerAndroid'
-        $architectures = @('arm64-v8a','armeabi-v7a','x86_64')
-        foreach($arch in $architectures){
-            $apkName = "$package-$arch-Signed.apk"
-            $publishedApkName = "$appName-v${{ inputs.input_app_version }}-$arch.apk"
+        $apkName = "$package-Signed.apk"
+        $publishedApkName = "$appName-v${{ inputs.input_app_version }}.apk"
 
-            Move-Item -Path "$env:Publish_Directory\$apkName" -Destination ./
-            Write-Host "$publishedApkName moved"
-        }
+        Move-Item -Path "$env:Publish_Directory\$apkName" -Destination "./$publishedApkName"
+        Write-Host "$publishedApkName moved"
 
-    # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
-    - name: Upload MSIX package
+    # Upload the APK package: https://github.com/marketplace/actions/upload-a-build-artifact
+    - name: Upload APK package
       uses: actions/upload-artifact@v4
       with:
         name: RacingCarsControllerAndroid

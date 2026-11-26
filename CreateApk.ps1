@@ -39,7 +39,7 @@ Function Build {
         $signingKeyPass
     )
 
-    dotnet publish -f:net11.0-android -c:Release /p:AndroidSigningKeyPass=$signingKeyPass /p:AndroidSigningStorePass=$signingKeyPass
+    dotnet publish '.\RacingCarsControllerAndroid\RacingCarsControllerAndroid.csproj' -f:net11.0-android -c:Release /p:AndroidSigningKeyPass=$signingKeyPass /p:AndroidSigningStorePass=$signingKeyPass
 }
 
 Function CopyToLocalAppStore {
@@ -54,15 +54,11 @@ Function CopyToLocalAppStore {
     $appName = 'RacingCarsController'
 
     $package = 'com.tmk907.RacingCarsControllerAndroid'
-    $architectures = @('arm64-v8a','armeabi-v7a','x86_64')
+    $apkName = "$package-Signed.apk"
+    $publishedApkName = "$appName-v$versionName.apk"
 
-    foreach($arch in $architectures){
-        $apkName = "$package-$arch-Signed.apk"
-        $publishedApkName = "$appName-v$versionName-$arch.apk"
-
-        Copy-Item -Path "$publishDirectory\$apkName" -Destination "$appStoreDirectory\$publishedApkName"
-        Write-Host "$publishedApkName copied to  $appStoreDirectory"
-    }
+    Copy-Item -Path "$publishDirectory\$apkName" -Destination "$appStoreDirectory\$publishedApkName"
+    Write-Host "$publishedApkName copied to  $appStoreDirectory"
 }
 
 ChangeVersion -newVersionName $newVersionName
